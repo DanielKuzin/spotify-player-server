@@ -6,9 +6,14 @@ const SpotifyWebApi = require("spotify-web-api-node");
 const lyricsFinder = require("lyrics-finder");
 
 const app = express();
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get("/", (req, res) => {
+  res.send("dan's player server");
+});
 
 app.post("/refresh", (req, res) => {
   const refreshToken = req.body.refreshToken;
@@ -33,12 +38,7 @@ app.post("/refresh", (req, res) => {
     });
 });
 
-let firstCall = true;
-
 app.post("/login", (req, res) => {
-  if (!firstCall) return;
-  firstCall = false;
-
   const code = req.body.code;
 
   var spotifyApi = new SpotifyWebApi({
@@ -69,4 +69,5 @@ app.get("/lyrics", async (req, res) => {
   res.json({ lyrics });
 });
 
-app.listen(3001);
+const port = process.env.port || 8080;
+app.listen(port, () => console.log("listening on port " + port));
